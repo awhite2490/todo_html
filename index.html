@@ -5,10 +5,13 @@
         <script src="./script.js"></script>
         <link rel="stylesheet" href="./style.css"/>
     </head>
-    <body>
+    <body onload="fetchItems()">
         <h1>To-Do List</h1>
-        <input type="text" id="inputBox" />
-        <button onclick="add_item()">Add</button>
+        <form onsubmit="add_item()" method="POST">
+            <input type="text" name="text" id="inputBox" />
+            <!--<button onclick="add_item()">Add</button>-->
+            <button type="submit">Add</button>
+        </form>
         <div>
             <ul id="items">
 
