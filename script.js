@@ -4,6 +4,7 @@ function add_item() {
     let text = document.getElementById("inputBox").value;
     fetch(api, {
         method: 'POST',
+        mode: 'cors',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -19,12 +20,24 @@ function remove_item(id) {
 }
 
 function changeLabel(chkBox) {
-    var label = document.getElementById("l" + chkBox.id);
-    label.classList.add("completed");
+    let label = document.getElementById("l" + chkBox.id);
+    let text = label.textContent;
+    fetch(api + chkBox.id, {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: `{"text":"${text}", "isComplete":"${chkBox.checked}"}`
+    });
+    window.location.reload();
 }
 
 function fetchItems() {
-    fetch(api)
+    fetch(api, {
+        method: 'GET',
+        mode: 'cors'
+    })
     .then(response => response.json())
     .then(
         (result) => {
@@ -50,18 +63,21 @@ function createItem(json) {
 
     let li = document.createElement("li");
 
-    li.appendChild(createLabel(id, text));
+    li.appendChild(createLabel(id, text, isComplete));
     li.appendChild(createCheckbox(id, isComplete));
     li.appendChild(createRemoveButton(id));
 
     return li;
 }
 
-function createLabel(id, text) {
+function createLabel(id, text, isComplete) {
     let label = document.createElement("label");
     label.id = "l" + id;
     label.for = id;
     label.appendChild(document.createTextNode(text));
+    if (isComplete) {
+        label.classList.add("completed");
+    }
     return label;
 }
 
@@ -70,6 +86,9 @@ function createCheckbox(id, isComplete) {
     chkBox.type = "checkbox";
     chkBox.id = id;
     chkBox.checked = isComplete;
+    chkBox.addEventListener('change', function () {
+        changeLabel(chkBox);
+    });
     return chkBox;
 }
 
